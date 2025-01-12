@@ -100,6 +100,11 @@ body {
 
 }
 
+.no-scroll {
+    overflow: hidden;
+    height: 100vh;
+}
+
 .custom-background {
     position: relative;
     background-image: url('/static/frame/images/java_shadow.png');

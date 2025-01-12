@@ -22,10 +22,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Открытие/закрытие меню по клику на кнопку
     toggleButton.addEventListener("click", function () {
+        event.stopPropagation(); // Предотвращаем всплытие клика
         const isMobile = window.innerWidth <= 768;
     
         if (isMobile) {
             sidebar.classList.toggle("open");
+            
+            //Убераем скролл
+            document.body.classList.toggle("no-scroll", sidebar.classList.contains("open"));
         } else {
             sidebar.classList.toggle("closed");
             mainContent.classList.toggle("full-width");
@@ -66,4 +70,18 @@ document.addEventListener("DOMContentLoaded", function () {
         mainContent.classList.add("full-width");
     }
     sidebar.classList.add("loaded"); // После всех операций
+
+    // Закрытие sidebar при клике вне его
+    document.addEventListener("click", function (event) {
+        const isClickInsideSidebar = sidebar.contains(event.target);
+        const isClickOnToggleButton = toggleButton.contains(event.target);
+        const isMobile = window.innerWidth <= 768;
+
+        if (!isClickInsideSidebar && !isClickOnToggleButton && isMobile) {
+            sidebar.classList.add("closed");
+            sidebar.classList.remove("open");
+            mainContent.classList.add("full-width");
+            document.body.classList.remove("no-scroll");
+        }
+    });
 });
