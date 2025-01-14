@@ -199,7 +199,7 @@ if __name__ == "__main__":
     )
 
     pivot_table = pivot_table.sort_values(by='avg_salary', ascending=True)
-    create_html_table(pivot_table)
+    create_html_table(pivot_table.sort_values(by='avg_salary', ascending=False))
     fig, ax = plt.subplots(figsize=(15, 10))
     ax.set_facecolor('#25fc3b')
     plt.gcf().set_facecolor('#25fc3b')
