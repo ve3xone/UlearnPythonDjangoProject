@@ -99,9 +99,12 @@ body {
     --bs-nav-pills-link-active-bg: #8b00ff;
 }
 
+.table-dark {
+    --bs-table-bg: rgba(0, 0, 0, 0.4); /* прозрачность на таблицы */
+}
+
 :root {
     --bs-dark-rgb: 31, 31, 37;
-    
 }
 
 .no-scroll {
