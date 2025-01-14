@@ -4,6 +4,7 @@ import ray # Нужно для работы modin.pandas
 import modin.pandas as pd # Многопоток #3 minutes and 24 seconds
 # import pandas as pd # Однопоток
 import numpy as np
+import re
 import matplotlib.pyplot as plt
 import requests
 import time
@@ -148,6 +149,9 @@ def create_html_table(pandas_df):
         classes='dataframe table table-dark',
         float_format='{:,.0f}'.format  # Форматирование чисел
     )
+
+    # Заменяем text-align: right; на text-align: center;
+    html_string = re.sub(r'text-align: right;', 'text-align: center;', html_string)
 
     with open('salary_by_city.html', 'w', encoding='utf-8') as f:
         f.write(html_string)

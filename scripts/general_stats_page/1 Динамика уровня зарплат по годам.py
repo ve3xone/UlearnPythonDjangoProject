@@ -3,6 +3,7 @@ import os
 import ray # Нужно для работы modin.pandas
 import modin.pandas as pd # Многопоток #3 minutes and 24 seconds
 #import pandas as pd # Однопоток
+import re
 import numpy as np
 import matplotlib.pyplot as plt
 import requests
@@ -155,6 +156,9 @@ def create_html_table(yearly_salaries):
         float_format='{:,.0f}'.format  # Форматирование чисел
     )
 
+    # Заменяем text-align: right; на text-align: center;
+    html_string = re.sub(r'text-align: right;', 'text-align: center;', html_string)
+
     with open('salary_by_year.html', 'w', encoding='utf-8') as f:
         f.write(html_string)
 
@@ -184,7 +188,7 @@ def process_salary_data(df, table_curr):
     df_copy_salary_pivot_save['avg_salary'] = df_copy_salary_pivot_save['avg_salary'].astype('int')
     create_html_table(df_copy_salary_pivot_save)
 
-    fig, ax = plt.subplots(figsize=(12, 7), facecolor='none')
+    fig, ax = plt.subplots(figsize=(14, 10), facecolor='none')
     ax.set_facecolor('#25fc3b')
     plt.gcf().set_facecolor('#25fc3b')
     plt.style.use('dark_background')
@@ -197,12 +201,12 @@ def process_salary_data(df, table_curr):
     # Настройка цвета и толщины тиков (меток осей)
     ax.tick_params(axis='both', colors='white', width=1)
 
-    plt.title("Динамика уровня зарплат по годам", color='white')
+    plt.title("Динамика уровня зарплат по годам", color='white', fontsize=24)
     plt.bar(df_copy_salary_pivot['year'], df_copy_salary_pivot['avg_salary'], color='blue')
     plt.plot(df_copy_salary_pivot['year'], df_copy_salary_pivot['avg_salary'], color='red', marker='o')
-    plt.xlabel("Год", color='white')
+    plt.xlabel("Год", color='white', fontsize=14)
     plt.xticks(color='white')
-    plt.ylabel("Средняя зарплата", color='white')
+    plt.ylabel("Средняя зарплата", color='white', fontsize=14)
     plt.yticks(color='white')
     # plt.legend(fontsize=14, facecolor='none', edgecolor='white')
     plt.grid(axis='y', color='white')

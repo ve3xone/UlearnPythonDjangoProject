@@ -3,6 +3,7 @@ import os
 import ray # Нужно для работы modin.pandas
 import modin.pandas as pd # Многопоток #3 minutes and 24 seconds
 #import pandas as pd # Однопоток
+import re
 import matplotlib.pyplot as plt
 
 def extract(value):
@@ -50,6 +51,9 @@ def create_html_table(yearly_count):
         classes='dataframe table table-dark',
         float_format='{:,.0f}'.format  # Форматирование чисел
     )
+
+    # Заменяем text-align: right; на text-align: center;
+    html_string = re.sub(r'text-align: right;', 'text-align: center;', html_string)
 
     with open('count_by_year.html', 'w', encoding='utf-8') as f:
         f.write(html_string)

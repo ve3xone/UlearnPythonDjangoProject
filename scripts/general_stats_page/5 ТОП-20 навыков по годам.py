@@ -4,6 +4,7 @@ import ray # Нужно для работы modin.pandas
 import modin.pandas as pd # Многопоток #3 minutes and 24 seconds
 #import pandas as pd # Однопоток
 import numpy as np
+import re
 import matplotlib.pyplot as plt
 import requests
 import time
@@ -149,6 +150,9 @@ def create_html_table(yearly_count, year):
         float_format='{:,.0f}'.format  # Форматирование чисел
     )
 
+    # Заменяем text-align: right; на text-align: center;
+    html_string = re.sub(r'text-align: right;', 'text-align: center;', html_string)
+
     with open(f'top-20-vacs-{year}.html', 'w', encoding='utf-8') as f:
         f.write(html_string)
 
@@ -173,7 +177,7 @@ def top_skills(year, df):
     create_html_table(skills_frame_rename, year=year)
 
     fig, ax = plt.subplots(figsize=(17, 13))
-    plt.title(f"ТОП-20 навыков по {year} году", color='white')
+    plt.title(f"ТОП-20 навыков по {year} году", color='white', fontsize=24)
     # ax.set_facecolor('#F1F1F1')
     # plt.gcf().set_facecolor('#F1F1F1')
     ax.set_facecolor('#25fc3b')
@@ -187,8 +191,9 @@ def top_skills(year, df):
 
     # Настройка цвета и толщины тиков (меток осей)
     ax.tick_params(axis='both', colors='white', width=1)
-    plt.barh(skills_frame['skill'], skills_frame['freq'],color='white')
-    plt.xticks(rotation=45,color='white')
+    plt.barh(skills_frame['skill'], skills_frame['freq'], color='blue')
+    plt.xticks(rotation=45,color='white', fontsize=18)
+    plt.yticks(fontsize=18)
     plt.grid(axis='y',color='white')
     plt.savefig("ТОП-20 навыков по " + str(year) + " году.png", transparent=True, bbox_inches='tight')
     plt.close()
@@ -205,8 +210,7 @@ table_curr = get_all_currency()
 df_copy = df.copy()
 df_copy['data'] = df_copy['published_at'].apply(extract)
 df_copy['avg_salary'] = df_copy.apply(lambda row: avg_salary(row, table_curr), axis=1)
-# Оставлю навсякий не знаю нужно ли его использовать тут
-# df_copy = df_copy[df_copy['avg_salary'] < 10_000_000]
+df_copy = df_copy[df_copy['avg_salary'] < 10_000_000]
 df_copy['year'] = df_copy['published_at'].apply(extract_year)
 
 for i in range(2015, 2025):
