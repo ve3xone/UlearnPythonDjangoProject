@@ -135,13 +135,8 @@ def extract_year(value):
 
 def create_html_table(yearly_count):
     # Преобразуем DataFrame Modin в Pandas только для вызова to_html
-    if isinstance(yearly_count, pd.DataFrame):
-        pandas_df = yearly_count._to_pandas()  # Конвертируем в Pandas DataFrame
-    else:
-        pandas_df = yearly_count  # Если это уже Pandas, используем его напрямую
+    pandas_df = yearly_count._to_pandas()  # Конвертируем в Pandas DataFrame
 
-    # Сброс индекса и корректное именование столбцов
-    # pandas_df = pandas_df.reset_index()  # Преобразуем индекс в столбец
     pandas_df.columns = ["Год", "Кол-во выбранной вакансии"]  # Устанавливаем названия столбцов
 
     # Удаляем строки с пропущенными значениями
@@ -151,15 +146,15 @@ def create_html_table(yearly_count):
     html_string = pandas_df.to_html(
         index=False,  # Отключаем индекс в HTML
         border=1,
-        classes='dataframe table table-dark',
+        classes='table table-dark table-bordered table-hover table-sm',
         float_format='{:,.0f}'.format  # Форматирование чисел
     )
 
-    with open(f'count-by-year-my-vac.html', 'w', encoding='utf-8') as f:
-        f.write(html_string)
-
     # Заменяем text-align: right; на text-align: center;
     html_string = re.sub(r'text-align: right;', 'text-align: center;', html_string)
+
+    with open(f'count-by-year-my-vac.html', 'w', encoding='utf-8') as f:
+        f.write(html_string)
 
     print("[i] HTML таблица успешно создана!")
 
@@ -171,28 +166,23 @@ if __name__ == "__main__":
     df = pd.read_csv("Z:\\vacancies_2024.csv", parse_dates=['published_at']) #Использую RAMDISK
     df_copy = df.copy()
     names = [
-        'java', 'ява', 'джава', 'java-программист', 'spring', 'hibernate', 'struts', 
-        'vaadin', 'micronaut', 'quarkus', 'play framework', 'jhipster', 'jakarta ee', 
-        'log4j', 'slf4j', 'JPA', 'JDBC', 'jvm'
+        'java', 'ява', 'джава', 'java-программист', 'spring', 'hibernate',
+        'struts', 'vaadin', 'micronaut', 'quarkus'
     ]
-    exclusions = ['javascript', 'node.js', 'typescript', 'angular', 'react', 'vue',
-                  'c', 'golang', 'go', 'c++', 'assembly', 'rust', 'kotlin', 'groovy', 'scala']  # Список исключений
+    exclusions = ['javascript', 'node.js', 'typescript'] # Список исключений
 
     # Фильтрация с учетом исключений
     df_copy = df_copy[
         df_copy['name'].str.lower().str.contains('|'.join(names), na=False) &
         ~df_copy['name'].str.lower().str.contains('|'.join(exclusions), na=False)
     ]
-    # df_copy.shape
 
     df_copy[['salary_from','salary_to']] = df_copy[['salary_from','salary_to']].map(lambda x: float(x))
     df_copy['data'] = df_copy['published_at'].apply(extract)
     table_curr = get_all_currency()
     df_copy['avg_salary'] = df_copy.apply(lambda row: avg_salary(row, table_curr), axis=1)
     df_copy = df_copy[df_copy['avg_salary'] < 10_000_000]
-    # df_copy.shape
     df_copy['year'] = df_copy['published_at'].apply(extract_year)
-    # df_copy['name'].value_counts()
 
     df_copy_salary = df_copy[["name", 'year']].copy()
     df_copy_count_pivot_a = df_copy_salary.pivot_table(index='year', values=['name'], aggfunc='count')
@@ -209,7 +199,6 @@ if __name__ == "__main__":
         spine.set_edgecolor('white')  # Цвет рамки
         spine.set_linewidth(1)  # Толщина рамки (можно уменьшить)
 
-
     plt.bar(df_copy_count_pivot_a['year'],df_copy_count_pivot_a['name'], color='blue')
     plt.plot(df_copy_count_pivot_a['year'], df_copy_count_pivot_a['name'], color='red', marker='.')
     plt.xticks(df_copy_count_pivot_a['year'], color='white')
@@ -217,4 +206,3 @@ if __name__ == "__main__":
     plt.title("Динамика количества вакансий java-программиста по годам", color='white', fontsize=24)
     plt.grid(axis='y', color='white')
     plt.savefig("Динамика количества вакансий java-программиста по годам.png", transparent=True, bbox_inches='tight')
-    # plt.show()

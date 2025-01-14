@@ -136,30 +136,20 @@ def extract_year(value):
 
 
 def create_html_table(yearly_count, year):
-    # Преобразуем DataFrame Modin в Pandas только для вызова to_html
-    # Сброс индекса и корректное именование столбцов
-    # pandas_df = pandas_df.reset_index()  # Преобразуем индекс в столбец
-
     # Удаляем строки с пропущенными значениями
     yearly_count = yearly_count.dropna()
 
-    # Удаляем колонку 'name', если она существует
-    # if 'name' in yearly_count.columns:
-    #     yearly_count = yearly_count.drop(columns=['avg_salary'])
-
-    # yearly_count.columns = ["", "Кол-во вакансий"]  # Устанавливаем названия столбцов
-
+    # Преобразуем DataFrame Modin в Pandas только для вызова to_html
     # Создаем HTML-таблицу с использованием Pandas
     html_string = yearly_count._to_pandas().to_html(
         index=False,  # Отключаем индекс в HTML
         border=1,
-        classes='dataframe table table-dark',
+        classes='table table-dark table-bordered table-hover table-sm',
         float_format='{:,.0f}'.format  # Форматирование чисел
     )
 
     # Заменяем text-align: right; на text-align: center;
     html_string = re.sub(r'text-align: right;', 'text-align: center;', html_string)
-
 
     with open(f'top20-my-vac-year_{year}.html', 'w', encoding='utf-8') as f:
         f.write(html_string)
@@ -185,17 +175,26 @@ def top_skills_analytics(year):
     skills_frame_rename.index = skills_frame_rename.index + 1
 
     create_html_table(skills_frame_rename, year)
-    # display(skills_frame_rename)
+
     fig, ax = plt.subplots(figsize=(40, 30))
-    ax.set_facecolor('#F1F1F1')
-    plt.gcf().set_facecolor('#F1F1F1')
-    plt.title(f"ТОП-20 навыков за {year} для java-программиста", fontsize=30)
-    plt.barh(skill['skill'], skill['freq'])
+    ax.set_facecolor('#25fc3b')
+    plt.gcf().set_facecolor('#25fc3b')
+    plt.style.use('dark_background')
+
+    # делаем рамку белой
+    for spine in ax.spines.values():
+        spine.set_edgecolor('white')  # Цвет рамки
+        spine.set_linewidth(1)  # Толщина рамки (можно уменьшить)
+    
+    # Настройка цвета и толщины тиков (меток осей)
+    ax.tick_params(axis='both', colors='white', width=1)
+    plt.title(f"ТОП-20 навыков за {year} для java-программиста", fontsize=30, color='white')
+    plt.barh(skill['skill'], skill['freq'], color='blue')
     plt.yticks(fontsize=29)
     plt.xticks(rotation=45, fontsize=29)
-    plt.grid(axis='y')
-    plt.savefig("top20_skills_for_java-программиста_ " + str(year) + " year.png", bbox_inches='tight')
-    # plt.show()
+    plt.grid(axis='y', color='white')
+    plt.savefig("top20_skills_for_java-программиста_" + str(year) + "_year.png", transparent=True, bbox_inches='tight')
+
 
 if __name__ == "__main__":
     # Нужно для работы modin.pandas
@@ -227,33 +226,3 @@ if __name__ == "__main__":
 
     for i in range(2015, 2025):
         top_skills_analytics(i)
-
-    # df_copy_salary_level_all = df_copy._to_pandas().pivot_table(index='area_name', values=['avg_salary', 'name'], aggfunc={'avg_salary':'mean', 'name':'count'}).reset_index().sort_values(by=["name",'avg_salary'], ascending=False)
-    # df_copy_salary_level_head = df_copy_salary_level_all.head(9)
-    # other_cities_count = df_copy_salary_level_all['name'].iloc[9:].sum()
-    # other_city = pd.DataFrame({'area_name': ['Другие'], 'name': [other_cities_count]})
-
-    # final_df = pd.concat([df_copy_salary_level_head, other_city], axis=0)
-
-    # final_df[['area_name','name']].reset_index(drop=True)
-
-    # create_html_table(final_df)
-
-    # fig, ax = plt.subplots(figsize=(15, 13)) #15,10
-    # ax.set_facecolor('#25fc3b')
-    # plt.gcf().set_facecolor('#25fc3b')
-    # plt.style.use('dark_background')
-
-    # # делаем рамку белой
-    # for spine in ax.spines.values():
-    #     spine.set_edgecolor('white')  # Цвет рамки
-    #     spine.set_linewidth(1)  # Толщина рамки (можно уменьшить)
-
-    # # Настройка цвета и толщины тиков (меток осей)
-    # ax.tick_params(axis='both', colors='white', width=1)
-    # plt.pie(final_df['name'], autopct='%1.1f%%', startangle=40)
-    # plt.title("Доля вакансий java-программиста по городам", color='white')
-    # plt.xlabel('Средняя зарплата', color='white')
-    # plt.grid(axis='y', color='white')
-    # plt.legend(labels=final_df['area_name'])
-    # plt.savefig("Доля вакансий java-программист по городам.png", transparent=True, bbox_inches='tight')
