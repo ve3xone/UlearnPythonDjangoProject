@@ -124,6 +124,31 @@ body {
     outline: none;
 }
 
+.card {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: justify; /* Выравнивание текста по ширине */
+    word-wrap: break-word; /* Перенос длинного текста */
+}
+.card h2 {
+    margin: 0 0 10px;
+    font-size: 20px;
+    color: #ffffff;
+    text-align: left; /* Заголовки остаются выровненными по левому краю */
+}
+.card p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #ffffff;
+}
+.card p strong {
+    color: #ffffff;
+}
+
 .custom-background .py-5 {
     position: relative;
     z-index: 2; /* Текст отображается поверх фона */

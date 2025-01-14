@@ -28,6 +28,7 @@ urlpatterns = [
     path('relevance', include('relevance_page.urls')),
     path('geography', include('geography_page.urls')),
     path('skills', include('skills_page.urls')),
+    path('latest_vacs', include('latest_vacs_page.urls')),
 ]
 
 if settings.DEBUG:
