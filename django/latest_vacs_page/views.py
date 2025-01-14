@@ -10,4 +10,4 @@ async def fetch_vacancies(request):
 
 async def render_vacancies(request):
     vacancies = await get_vacancies('java-программист')
-    return render(request, 'lastest_vacs.html', {'vacancies': vacancies})
+    return render(request, 'lastest_vacs_page.html', {'vacancies': vacancies})
