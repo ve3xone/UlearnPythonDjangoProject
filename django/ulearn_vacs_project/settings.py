@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'general_page',
     'general_stats_page',
-    'relevance_page'
+    'relevance_page',
+    'geography_page'
 ]
 
 MIDDLEWARE = [

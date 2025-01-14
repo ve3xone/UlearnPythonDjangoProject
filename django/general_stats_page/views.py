@@ -6,7 +6,7 @@ from .models import Statistics
 def general_stats(request):
     stats = Statistics.objects.first()
 
-    context = {
+    content = {
         'annual_salary_chart': stats.annual_salary_chart.url,
         'annual_salary_data': stats.annual_salary_data,
         'annual_vacancy_chart': stats.annual_vacancy_chart.url,
@@ -54,4 +54,4 @@ def general_stats(request):
     # else:
     #     # Возвращаем полный шаблон
     #     return render(request, 'general_stats.html', context)
-    return render(request, 'general_stats.html', context)
+    return render(request, 'general_stats.html', content)

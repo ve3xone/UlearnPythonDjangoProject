@@ -26,6 +26,7 @@ urlpatterns = [
     path('', include('general_page.urls')),
     path('general_stats', include('general_stats_page.urls')),
     path('relevance', include('relevance_page.urls')),
+    path('geography', include('geography_page.urls')),
 ]
 
 if settings.DEBUG:
