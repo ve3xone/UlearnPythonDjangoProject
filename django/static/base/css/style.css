@@ -53,12 +53,14 @@ body {
     z-index: 1050;
     transform: translateX(0); /* По умолчанию открыта на ПК */
 }
+
 .sidebar.loaded {
     display: block; /* Отображаем, если скрипт разрешил */
 }
 .sidebar.closed {
     transform: translateX(-100%); /* Скрыта */
 }
+
 .menu-toggle {
     position: fixed;
     top: 15px;
@@ -71,6 +73,7 @@ body {
     border-radius: 5px;
     cursor: pointer;
 }
+
 .main-content {
     margin-left: 280px;
     flex-grow: 1;
@@ -92,12 +95,13 @@ body {
     }
 }
 .nav-pills{
+    --bs-nav-pills-border-radius: 0.375;
     --bs-nav-pills-link-active-bg: #8b00ff;
 }
 
 :root {
     --bs-dark-rgb: 31, 31, 37;
-
+    
 }
 
 .no-scroll {
@@ -107,13 +111,17 @@ body {
 
 .custom-background {
     position: relative;
-    background-image: url('/static/frame/images/java_shadow.png');
+    background-image: url('/static/base/images/java_shadow.png');
     background-size: auto 825px; /* Покрывает всю область */
     background-repeat: no-repeat; /* Запрещает повторение */
     background-attachment: fixed;
     background-position: calc(50% + 300px) 0; /* Меньший сдвиг при уменьшении экрана */
     z-index: 1; /* Позиционирует слой позади текста */
     transition: background-position 0.3s ease; /* Плавный переход */
+}
+
+.menu-toggle:focus {
+    outline: none;
 }
 
 .custom-background .py-5 {

@@ -22,11 +22,12 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('favicon.ico', RedirectView.as_view(url='/static/frame/images/favicon.ico', permanent=True)),
+    path('favicon.ico', RedirectView.as_view(url='/static/base/images/favicon.ico', permanent=True)),
     path('', include('general_page.urls')),
     path('general_stats', include('general_stats_page.urls')),
     path('relevance', include('relevance_page.urls')),
     path('geography', include('geography_page.urls')),
+    path('skills', include('skills_page.urls')),
 ]
 
 if settings.DEBUG:
