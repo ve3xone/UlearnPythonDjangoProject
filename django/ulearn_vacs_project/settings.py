@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'general_page',
     'general_stats_page',
     'relevance_page',
-    'geography_page'
+    'geography_page',
+    'skills_page'
 ]
 
 MIDDLEWARE = [
