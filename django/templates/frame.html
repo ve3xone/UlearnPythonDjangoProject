@@ -19,11 +19,11 @@
                 <a href="/" target="_blank">
                     <img src="{% static 'frame/images/java.png' %}" style="width: 220px;" class="justify-content-center align-items-center">
                 </a>
-                <a href="/" class="d-flex justify-content-center align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                <a href="/" class="d-flex justify-content-center align-items-center text-white text-decoration-none mb-3 mb-md-0 me-md-auto">
                     <span class="fs-4">Java-программист</span>
                 </a>
                 <div class="container">
-                    <footer class="d-flex flex-wrap py-3 my-2 border-top"></footer>
+                    <footer class="d-flex flex-wrap border-top py-3 my-2"></footer>
                 </div>
                 <ul class="nav nav-pills flex-column mb-auto">
                     <li class="nav-item">
@@ -72,6 +72,9 @@
     <script src="{% static 'frame/js/sidebar.js' %}"></script>
     <!-- Скрипт на снег -->
     <script src="{% static 'frame/js/snowfall.js' %}"></script>
+
+    <!-- AJAX загрузка страниц а не перезагрузка всей страницы -->
+    <!-- Думаю добавить если успею все остальное -->
     <!-- <script>
             document.addEventListener("click", function (event) {
                 const link = event.target.closest(".ajax-link");
@@ -118,9 +121,6 @@
                     })
                     .catch(error => console.error("Ошибка загрузки контента:", error));
             });
-
-
-
     </script> -->
 </body>
 </html>
