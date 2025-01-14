@@ -144,6 +144,9 @@ body {
     margin: 5px 0;
     font-size: 14px;
     color: #ffffff;
+    word-wrap: break-word; /* Перенос слов, если они длиннее ширины контейнера */
+    word-break: break-word; /* Альтернативный способ для совместимости */
+    overflow-wrap: break-word; /* Современное свойство для переноса */
 }
 .card p strong {
     color: #ffffff;
