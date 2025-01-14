@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'general_page',
-    'general_stats_page'
+    'general_stats_page',
+    'relevance_page'
 ]
 
 MIDDLEWARE = [

@@ -25,6 +25,7 @@ urlpatterns = [
     path('favicon.ico', RedirectView.as_view(url='/static/frame/images/favicon.ico', permanent=True)),
     path('', include('general_page.urls')),
     path('general_stats', include('general_stats_page.urls')),
+    path('relevance', include('relevance_page.urls')),
 ]
 
 if settings.DEBUG:

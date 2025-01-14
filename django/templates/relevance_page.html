@@ -1,0 +1,22 @@
+{% extends 'frame.html' %}
+{% block title %}
+    Востребованность
+{% endblock %}
+{% block content %}
+    <div class="custom-background text-center text-secondary px-4 py-5">
+        <div class="py-5">
+            <h1 class="display-5 text-white fw-bold ">Востребованность</h1>
+            <div class="d-flex flex-column align-items-center col-lg-8 mx-auto">
+                <div class="text-center mb-3">
+                    <img src="{{ annual_salary_chart }}" class="img-fluid mb-4">
+                    <div class="table-bordered mt-3">{{ annual_salary_data|safe }}</div>
+                </div>
+
+                <div class="text-center mb-3">
+                    <img src="{{ annual_vacancy_chart }}" class="img-fluid mb-4">
+                    <div class="table-bordered mt-3">{{ annual_vacancy_data|safe }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
