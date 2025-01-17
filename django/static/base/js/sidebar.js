@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Управление состоянием при изменении размера окна
     window.addEventListener("resize", function () {
         const isMobile = window.innerWidth <= 768;
-    
+
         if (!isUserToggled) {
             // Если пользователь не менял состояние вручную, управляем по умолчанию
             if (isMobile) {
@@ -60,6 +60,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 sidebar.classList.remove("closed");
                 sidebar.classList.remove("open");
                 mainContent.classList.remove("full-width");
+            }
+        }
+        else {
+            if (!isMobile) {
+                document.body.classList.remove("no-scroll");
+            }
+            else{
+                document.body.classList.add("no-scroll");
             }
         }
     });
