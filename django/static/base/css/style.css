@@ -4,6 +4,19 @@ body {
     padding: 0;
 }
 
+body::-webkit-scrollbar {
+    width: 8px;
+}
+
+body::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.2); /* Цвет ползунка */
+    border-radius: 4px;
+}
+
+body::-webkit-scrollbar-track {
+    background-color: rgba(0, 0, 0, 0.2); /* Цвет трека */
+}
+
 :root {
     --bs-dark-rgb: 31, 31, 37;
 }
@@ -106,7 +119,7 @@ body {
 .menu-toggle {
     position: fixed;
     top: 15px;
-    left: 15px;
+    left: 8px;
     z-index: 1100;
     background: #212529;
     border: none;
@@ -150,6 +163,7 @@ body {
 .menu-container {
     max-height: 300px; /* Настройте высоту по вашему усмотрению */
     overflow-y: auto;
+    height: 100%; /* Полная высота контейнера */
 }
 
 .custom-background {
