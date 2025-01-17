@@ -7,7 +7,7 @@
         <div id="vacancies-container">
             {% for vacancy in vacancies %}
             <div class="card text-while">
-                <h2>{{ vacancy.title }}</h2>
+                <h2> <a href="https://hh.ru/vacancy/{{ vacancy.id }}">{{ vacancy.title }}</a></h2>
                 <p><strong>Компания:</strong> {{ vacancy.company }}</p>
                 <p><strong>Регион:</strong> {{ vacancy.region }}</p>
                 <p><strong>Оклад:</strong> {{ vacancy.salary_info }}</p>
