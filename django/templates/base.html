@@ -17,46 +17,59 @@
     <div class="d-flex">
         <!-- Панель -->
         <div class="sidebar" id="sidebar">
-            <div class="p-3">
+            <div class="px-4 py-3 custom-background text-light">
                 <a href="/" target="_blank">
-                    <img src="{% static 'base/images/java.png' %}" style="width: 220px;" class="justify-content-center align-items-center">
+                    <img src="{% static 'base/images/java.png' %}" alt="Java" style="max-width: 200px;" class="mx-auto d-block">
                 </a>
                 
-                <a href="/" class="d-flex justify-content-center align-items-center text-white text-decoration-none mb-3 mb-md-0 me-md-auto">
-                    <span class="fs-4">Java-программист</span>
-                </a>
-                <div class="container">
-                    <footer class="d-flex flex-wrap border-top py-3 my-2"></footer>
+                <div class="text-center my-3">
+                    <a href="/" class="text-decoration-none text-light fw-bold">
+                        <h3 style="font-size: 1.5rem; white-space: nowrap;">Java-программист</h3>
+                    </a>
                 </div>
-                <ul class="nav nav-pills flex-column mb-auto">
-                    <li class="nav-item">
-                        <a href="/" class="nav-link {% if request.path == '/' %}active{% endif %} text-white ajax-link" aria-current="page">🏠 Главная страница</a>
+
+                <ul class="list-group list-group-flush mb-3">
+                    <li class="list-group-item bg-transparent border-0 px-0">
+                        <a href="/" class="btn w-100 text-start {% if request.path == '/' %}btn-primary{% else %}btn-outline-primary text-while{% endif %}">
+                            🏠 Главная страница
+                        </a>
                     </li>
-                    <li>
-                        <a href="/general_stats" class="nav-link {% if request.path == '/general_stats' %}active{% endif %} text-white ajax-link" data-title="Общая статистика">📊 Общая статистика</a>
+                    <li class="list-group-item bg-transparent border-0 px-0">
+                        <a href="/general_stats" class="btn w-100 text-start {% if request.path == '/general_stats' %}btn-primary{% else %}btn-outline-primary{% endif %}" data-title="Общая статистика">
+                            📊 Общая статистика
+                        </a>
                     </li>
-                    <li>
-                        <a href="/relevance" class="nav-link {% if request.path == '/relevance' %}active{% endif %} text-white">📈 Востребованность</a>
+                    <li class="list-group-item bg-transparent border-0 px-0">
+                        <a href="/relevance" class="btn w-100 text-start {% if request.path == '/relevance' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                            📈 Востребованность
+                        </a>
                     </li>
-                    <li>
-                        <a href="/geography" class="nav-link {% if request.path == '/geography' %}active{% endif %} text-white">🌍 География</a>
+                    <li class="list-group-item bg-transparent border-0 px-0">
+                        <a href="/geography" class="btn w-100 text-start {% if request.path == '/geography' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                            🌍 География
+                        </a>
                     </li>
-                    <li>
-                        <a href="/skills" class="nav-link {% if request.path == '/skills' %}active{% endif %} text-white">📚 Навыки</a>
+                    <li class="list-group-item bg-transparent border-0 px-0">
+                        <a href="/skills" class="btn w-100 text-start {% if request.path == '/skills' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                            📚 Навыки
+                        </a>
                     </li>
-                    <li>
-                        <a href="/latest_vacs" class="nav-link {% if request.path == '/latest_vacs' %}active{% endif %} text-white">💼 Последние вакансии</a>
+                    <li class="list-group-item bg-transparent border-0 px-0">
+                        <a href="/latest_vacs" class="btn w-100 text-start {% if request.path == '/latest_vacs' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                            💼 Последние вакансии
+                        </a>
                     </li>
                 </ul>
                 
-                <div class="container">
-                    <footer class="d-flex flex-wrap py-3 my-4 border-top">
-                        <div class="d-flex align-items-center">
-                            <p><a href="https://github.com/ve3xone" class="text-danger">Старцев Владислав Игоревич РИ-230945</a></p>
-                        </div>
-                        <span class="mb-3 mb-md-0 text-warning">2025</span>
-                    </footer>
-                </div>
+                <footer class="mt-3 border-top pt-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a href="https://github.com/ve3xone" class="text-danger">
+                            Старцев Владислав Игоревич РИ-230945
+                        </a>
+                    </div>
+                    <div class="w-100 text-warning mt-2">2025</div>
+                </footer>
+                
             </div>
         </div>
 
@@ -66,7 +79,7 @@
                 <div class="d-flex align-items-center px-6">
                     <a href="/" class="d-flex align-items-center text-while text-decoration-none">
                         <img src="{% static 'base/images/java.png' %}" alt="Логотип" style="width: 50px;" class="me-2">
-                        <span class="fs-4 text-while">Java-программист</span>
+                        <span class="text-while">Java-программист</span>
                     </a>
                 </div>
             </header>
@@ -89,8 +102,10 @@
             integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" 
             crossorigin="anonymous">
     </script>
+
     <!-- Скрипт на адаптивность меню -->
     <script src="{% static 'base/js/sidebar.js' %}"></script>
+    
     <!-- Скрипт на снег -->
     <script src="{% static 'base/js/snowfall.js' %}"></script>
 

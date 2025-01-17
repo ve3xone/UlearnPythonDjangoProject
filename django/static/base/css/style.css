@@ -1,6 +1,11 @@
 body {
+    height: 100%;
     margin: 0;
     padding: 0;
+}
+
+:root {
+    --bs-dark-rgb: 31, 31, 37;
 }
 
 #snowflakes {
@@ -45,6 +50,8 @@ body {
     display: none; /* Скрываем пока не загрузится скрипт */
     transition: transform 0.3s ease;
     width: 270px;
+    min-width: 270h; /* Минимальная ширина */
+    max-width: 100%; /* Не позволяет выходить за пределы экрана */
     background-color: rgba(40, 40, 48, 0.8); /* Чуть темнее и прозрачность 90% */
     height: 100vh;
     position: fixed;
@@ -52,13 +59,48 @@ body {
     left: 0;
     z-index: 1050;
     transform: translateX(0); /* По умолчанию открыта на ПК */
+    max-height: 100vh; /* Ограничиваем высоту сайдбара */
+    overflow-y: auto; /* Добавляем прокрутку, если контент не помещается */
+    display: flex; /* Для гарантированного растягивания содержимого */
+    flex-direction: column; /* Чтобы содержимое шло сверху вниз */
+}
+
+.sidebar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.2); /* Цвет ползунка */
+    border-radius: 4px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background-color: rgba(0, 0, 0, 0.2); /* Цвет трека */
 }
 
 .sidebar.loaded {
     display: block; /* Отображаем, если скрипт разрешил */
 }
+
 .sidebar.closed {
     transform: translateX(-100%); /* Скрыта */
+}
+
+.btn-outline-primary{
+    --bs-btn-color: #ffffff;
+}
+
+.btn {
+    border-radius: 55px;
+}
+
+.btn:hover {
+    transform: scale(1.1);
+    transition: transform 0.2s ease-in-out;
+}
+.btn:active {
+    transform: scale(0.8);
+    transition: transform 0.1s ease-in-out;
 }
 
 .menu-toggle {
@@ -79,6 +121,7 @@ body {
     flex-grow: 1;
     transition: margin-left 0.3s ease;
 }
+
 .main-content.full-width {
     margin-left: 0; /* Полная ширина при закрытой панели */
 }
@@ -94,22 +137,19 @@ body {
         margin-left: 0;
     }
 }
-.nav-pills{
-    --bs-nav-pills-border-radius: 0.375;
-    --bs-nav-pills-link-active-bg: #8b00ff;
-}
 
 .table-dark {
     --bs-table-bg: rgba(0, 0, 0, 0.4); /* прозрачность на таблицы */
 }
 
-:root {
-    --bs-dark-rgb: 31, 31, 37;
-}
-
 .no-scroll {
     overflow: hidden;
     height: 100vh;
+}
+
+.menu-container {
+    max-height: 300px; /* Настройте высоту по вашему усмотрению */
+    overflow-y: auto;
 }
 
 .custom-background {
@@ -137,12 +177,14 @@ body {
     text-align: justify; /* Выравнивание текста по ширине */
     word-wrap: break-word; /* Перенос длинного текста */
 }
+
 .card h2 {
     margin: 0 0 10px;
     font-size: 20px;
     color: #ffffff;
     text-align: left; /* Заголовки остаются выровненными по левому краю */
 }
+
 .card p {
     margin: 5px 0;
     font-size: 14px;
@@ -151,6 +193,7 @@ body {
     word-break: break-word; /* Альтернативный способ для совместимости */
     overflow-wrap: break-word; /* Современное свойство для переноса */
 }
+
 .card p strong {
     color: #ffffff;
 }
