@@ -1,7 +1,7 @@
 import asyncio
 from django.shortcuts import render
 from django.http import JsonResponse
-from .utils import get_vacancies  # Вынесите вашу логику в utils.py
+from .utils import get_vacancies
 
 async def fetch_vacancies(request):
     profession = request.GET.get('profession', 'Java')
