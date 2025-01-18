@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from .utils import get_vacancies  # Вынесите вашу логику в utils.py
 
 async def fetch_vacancies(request):
-    profession = request.GET.get('profession', 'IT')
+    profession = request.GET.get('profession', 'Java')
     vacancies = await get_vacancies(profession)
     return JsonResponse({'vacancies': vacancies})
 
