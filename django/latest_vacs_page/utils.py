@@ -1,20 +1,28 @@
 import httpx
 import asyncio
 from bs4 import BeautifulSoup
+from datetime import datetime
 from typing import Optional, List, Dict, Any
 
 
-def format_iso_date(date_str: str) -> str:
+def format_date_human_readable(iso_date: str) -> str:
     """
-    Исправляет формат даты ISO 8601, добавляя двоеточие в зону времени.
+    Преобразует дату из формата ISO 8601 в человеко-читаемый формат на русском языке.
 
     Аргументы:
-        date_str (str): Строка с датой в формате ISO.
+        iso_date (str): Дата в формате ISO 8601.
 
     Возвращает:
-        str: Отформатированная строка даты ISO.
+        str: Дата в формате 'день месяц годг. часы:минуты:секунды'.
     """
-    return date_str[:-5] + ':' + date_str[-5:]
+    months = {
+        1: 'января', 2: 'февраля', 3: 'марта', 4: 'апреля', 5: 'мая', 6: 'июня',
+        7: 'июля', 8: 'августа', 9: 'сентября', 10: 'октября', 11: 'ноября', 12: 'декабря'
+    }
+    iso_date_corrected = iso_date[:-5] if '+' in iso_date else iso_date
+    dt = datetime.strptime(iso_date_corrected, "%Y-%m-%dT%H:%M:%S")
+    month = months[dt.month]
+    return dt.strftime(f"%d {month} %Yг. %H:%M:%S")
 
 
 async def fetch_data(client: httpx.AsyncClient, url: str, params: Optional[Dict[str, Any]] = None) -> Optional[Dict[str, Any]]:
@@ -151,7 +159,7 @@ async def get_vacancies(profession: str) -> List[Dict[str, Any]]:
                 'company': vacancy['employer']['name'],
                 'salary_info': await format_salary(vacancy['salary']),
                 'region': vacancy['area']['name'],
-                'published_at': vacancy['published_at'],
+                'published_at': format_date_human_readable(vacancy['published_at']),
                 'description': '',
                 'skills': ''
             }
