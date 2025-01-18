@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-v$ghmvh%_ms2ei5te@t)x#3$%ov3%5h%t(8ar-l%5@5haosxe4
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = ["ve3xone.pythonanywhere.com"]
 
 
 # Application definition
@@ -123,7 +123,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'), )
+# STATIC_ROOT = '/home/ve3xone/django/static' # For pythonanywhere (python manage.py collectstatic)
+STATICFILES_DIRS = os.path.join(BASE_DIR, 'static')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
