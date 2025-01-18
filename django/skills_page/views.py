@@ -1,8 +1,9 @@
 from django.shortcuts import render
-
 from .models import SkillsStatistics
 
+
 def skills_page(request):
+    """Рендер страницы навыки"""
     skills_vac_stats = SkillsStatistics.objects.first()
 
     content = {

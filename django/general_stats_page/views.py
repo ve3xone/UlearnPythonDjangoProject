@@ -1,9 +1,9 @@
 from django.shortcuts import render
-
 from .models import Statistics
 
 
 def general_stats(request):
+    """Рендер общей статистики"""
     stats = Statistics.objects.first()
 
     content = {
@@ -46,12 +46,5 @@ def general_stats(request):
         'top_skills_2024_chart': stats.top_skills_2024_chart.url,
         'top_skills_2024_data': stats.top_skills_2024_data
     }
-    
-    # Проверка, AJAX-запрос это или нет
-    # if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-    #     # Возвращаем только контент для AJAX
-    #     return render(request, 'general_stats_partial.html', context)
-    # else:
-    #     # Возвращаем полный шаблон
-    #     return render(request, 'general_stats.html', context)
+
     return render(request, 'general_stats.html', content)

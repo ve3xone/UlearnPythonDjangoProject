@@ -2,6 +2,7 @@ from django.db import models
 
 
 class SkillsStatistics(models.Model):
+    """"Модель страницы навыки"""
     top20_skills_java_2015_graph = models.ImageField(
         blank=False, 
         verbose_name='График навыков за 2015 год для Java-программиста'

@@ -1,6 +1,8 @@
 from django.db import models
 
+
 class Statistics(models.Model):
+    """Моделька общей статистики"""
     annual_salary_chart = models.ImageField(blank=False, verbose_name='График зарплат по годам')
     annual_salary_data = models.TextField(blank=False, verbose_name='Таблица зарплат по годам')
 
@@ -42,6 +44,7 @@ class Statistics(models.Model):
 
     top_skills_2024_chart = models.ImageField(blank=False, verbose_name='График ТОП-20 навыков за 2024 год')
     top_skills_2024_data = models.TextField(blank=False, verbose_name='Таблица ТОП-20 навыков за 2024 год')
+
 
     class Meta:
         verbose_name = 'Статистика'

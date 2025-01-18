@@ -1,8 +1,9 @@
 from django.shortcuts import render
-
 from .models import VacStatistics
 
+
 def relevance_page(request):
+    """Рендер страницы востребованность"""
     vacstats = VacStatistics.objects.first()
 
     content = {

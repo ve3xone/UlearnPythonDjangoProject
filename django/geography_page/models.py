@@ -2,6 +2,7 @@ from django.db import models
 
 
 class VacGeoStats(models.Model):
+    """Моделька страницы география"""
     salary_graph_by_city = models.ImageField(
         blank=False,
         verbose_name='График зарплат по городам для Java-разработчиков'

@@ -2,6 +2,7 @@ from django.db import models
 
 
 class VacStatistics(models.Model):
+    """Моделька страницы востребованность"""
     annual_salary_chart = models.ImageField(
         blank=False, 
         verbose_name='График зарплат по годам Java-программист'

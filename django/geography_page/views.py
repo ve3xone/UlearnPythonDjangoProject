@@ -3,6 +3,7 @@ from .models import VacGeoStats
 
 
 def geography(request):
+    """Рендер страницы география"""
     vac_geo_stats = VacGeoStats.objects.first()
 
     content = {
