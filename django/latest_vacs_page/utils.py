@@ -1,4 +1,4 @@
-import aiohttp
+import httpx
 import asyncio
 from bs4 import BeautifulSoup
 from typing import Optional, List, Dict, Any
@@ -17,23 +17,28 @@ def format_iso_date(date_str: str) -> str:
     return date_str[:-5] + ':' + date_str[-5:]
 
 
-async def fetch_data(session: aiohttp.ClientSession, url: str, params: Optional[Dict[str, Any]] = None) -> Optional[Dict[str, Any]]:
+async def fetch_data(client: httpx.AsyncClient, url: str, params: Optional[Dict[str, Any]] = None) -> Optional[Dict[str, Any]]:
     """
     Выполняет асинхронный GET-запрос для получения данных с указанного URL.
 
     Аргументы:
-        session (aiohttp.ClientSession): Сессия для выполнения запросов.
+        client (httpx.AsyncClient): Клиент для выполнения запросов.
         url (str): URL для запроса.
         params (Optional[Dict[str, Any]]): Дополнительные параметры запроса.
 
     Возвращает:
         Optional[Dict[str, Any]]: JSON-ответ в виде словаря или None, если запрос не удался.
     """
-    async with session.get(url, params=params) as response:
-        if response.status != 200:
-            print(f"Ошибка запроса: {response.status}")
-            return None
-        return await response.json()
+    try:
+        response = await client.get(url, params=params)
+        response.raise_for_status()
+        return response.json()
+    except httpx.RequestError as e:
+        print(f"Ошибка запроса: {e}")
+        return None
+    except httpx.HTTPStatusError as e:
+        print(f"HTTP ошибка: {e.response.status_code}")
+        return None
 
 
 async def format_salary(salary: Optional[Dict[str, Any]]) -> str:
@@ -91,18 +96,18 @@ def format_skills(skills: List[Dict[str, Any]]) -> str:
     return ', '.join(skill['name'] for skill in skills)
 
 
-async def fetch_vacancy_details(session: aiohttp.ClientSession, vacancy_url: str) -> Dict[str, str]:
+async def fetch_vacancy_details(client: httpx.AsyncClient, vacancy_url: str) -> Dict[str, str]:
     """
     Получает подробную информацию о вакансии.
 
     Аргументы:
-        session (aiohttp.ClientSession): Сессия для выполнения запросов.
+        client (httpx.AsyncClient): Клиент для выполнения запросов.
         vacancy_url (str): URL вакансии.
 
     Возвращает:
         Dict[str, str]: Словарь с описанием и навыками вакансии.
     """
-    details = await fetch_data(session, vacancy_url)
+    details = await fetch_data(client, vacancy_url)
     if details:
         return {
             'description': extract_text_from_html(details.get('description', 'Описание отсутствует')),
@@ -130,8 +135,8 @@ async def get_vacancies(profession: str) -> List[Dict[str, Any]]:
         'order_by': 'publication_time'
     }
 
-    async with aiohttp.ClientSession() as session:
-        vacancies_data = await fetch_data(session, 'https://api.hh.ru/vacancies', params=params)
+    async with httpx.AsyncClient() as client:
+        vacancies_data = await fetch_data(client, 'https://api.hh.ru/vacancies', params=params)
 
         if not vacancies_data:
             return []
@@ -150,7 +155,7 @@ async def get_vacancies(profession: str) -> List[Dict[str, Any]]:
                 'description': '',
                 'skills': ''
             }
-            tasks.append(fetch_vacancy_details(session, vacancy['url']))
+            tasks.append(fetch_vacancy_details(client, vacancy['url']))
             results.append(vacancy_info)
 
         details_list = await asyncio.gather(*tasks)
