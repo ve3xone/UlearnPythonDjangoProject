@@ -141,6 +141,9 @@ def create_html_table(yearly_count, year):
     # Удаляем строки с пропущенными значениями
     pandas_df = pandas_df.dropna()
 
+    # Сортируем по убыванию значений в столбце "Частота"
+    pandas_df = pandas_df.sort_values(by="Частота", ascending=False)
+
     # Создаем HTML-таблицу с использованием Pandas
     html_string = pandas_df.to_html(
         index=False,  # Отключаем индекс в HTML
