@@ -7,10 +7,11 @@ def geography(request):
     vac_geo_stats = VacGeoStats.objects.first()
 
     content = {
-        'salary_graph_by_city': vac_geo_stats.salary_graph_by_city.url,
-        'salary_table_by_city': vac_geo_stats.salary_table_by_city,
-        'vac_share_graph_by_city': vac_geo_stats.vac_share_graph_by_city.url,
-        'vac_share_table_by_city': vac_geo_stats.vac_share_table_by_city,
+        'graph_sal_by_city_url': vac_geo_stats.graph_sal_by_city.url,
+        'data_table_java_sal_by_city': vac_geo_stats.data_table_java_sal_by_city,
+
+        'graph_java_vac_share_by_city_url': vac_geo_stats.graph_java_vac_share_by_city.url,
+        'data_table_java_vac_share_by_city': vac_geo_stats.data_table_java_vac_share_by_city,
     }
 
     return render(request, 'geography_page.html', content)
