@@ -7,10 +7,11 @@ def relevance_page(request):
     vacstats = VacStatistics.objects.first()
 
     content = {
-        'annual_salary_chart': vacstats.annual_salary_chart.url,
-        'annual_salary_data': vacstats.annual_salary_data,
-        'annual_vacancy_chart': vacstats.annual_vacancy_chart.url,
-        'annual_vacancy_data': vacstats.annual_vacancy_data,
+        'graph_java_vac_sal_yearly_url': vacstats.graph_java_vac_sal_yearly.url,
+        'data_table_java_vac_sal_yearly': vacstats.data_table_java_vac_sal_yearly,
+
+        'graph_of_java_vacs_years_url': vacstats.graph_of_java_vacs_years.url,
+        'data_table_java_vacs_by_year': vacstats.data_table_java_vacs_by_year,
     }
 
     return render(request, 'relevance_page.html', content)
