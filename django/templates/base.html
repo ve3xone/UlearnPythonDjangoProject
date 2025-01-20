@@ -109,54 +109,5 @@
     <!-- Скрипт на снег -->
     <script src="{% static 'base/js/snowfall.js' %}"></script>
 
-    <!-- AJAX загрузка страниц а не перезагрузка всей страницы -->
-    <!-- Думаю добавить если успею все остальное -->
-    <!-- <script>
-            document.addEventListener("click", function (event) {
-                const link = event.target.closest(".ajax-link");
-                if (link) {
-                    event.preventDefault();
-                    const url = link.getAttribute("href");
-                    const title = link.getAttribute("data-title");
-                
-                    fetch(url, { headers: { "X-Requested-With": "XMLHttpRequest" } })
-                        .then(response => response.text())
-                        .then(html => {
-                            const mainContent = document.getElementById("mainContent");
-                            mainContent.innerHTML = html;
-                        
-                            // Обновляем заголовок страницы
-                            if (title) {
-                                document.title = title;
-                            }
-                        
-                            // Обновляем URL в истории браузера
-                            history.pushState({ path: url, title: title }, "", url);
-                        })
-                        .catch(error => console.error("Ошибка загрузки контента:", error));
-                }
-            });
-
-        
-            // Обработка кнопок "Назад" и "Вперёд"
-            window.addEventListener("popstate", function (event) {
-                const state = event.state || {};
-                const url = state.path || "/";
-                const title = state.title || "Default Title";
-
-                fetch(url, { headers: { "X-Requested-With": "XMLHttpRequest" } })
-                    .then(response => response.text())
-                    .then(html => {
-                        const mainContent = document.getElementById("mainContent");
-                        mainContent.innerHTML = html;
-                    
-                        // Устанавливаем новый заголовок
-                        if (title) {
-                            document.title = title;
-                        }
-                    })
-                    .catch(error => console.error("Ошибка загрузки контента:", error));
-            });
-    </script> -->
 </body>
 </html>
