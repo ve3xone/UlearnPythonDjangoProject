@@ -7,44 +7,47 @@ def general_stats(request):
     stats = Statistics.objects.first()
 
     content = {
-        'annual_salary_chart': stats.annual_salary_chart.url,
-        'annual_salary_data': stats.annual_salary_data,
-        'annual_vacancy_chart': stats.annual_vacancy_chart.url,
-        'annual_vacancy_data': stats.annual_vacancy_data,
-        'city_salary_chart': stats.city_salary_chart.url,
-        'city_salary_data': stats.city_salary_data,
-        'city_vacancy_share_chart': stats.city_vacancy_share_chart.url,
-        'city_vacancy_share_data': stats.city_vacancy_share_data,
+        'graph_sal_yearly_url': stats.graph_sal_yearly.url,
+        'data_table_sal_yearly': stats.data_table_sal_yearly,
 
-        'top_skills_2015_chart': stats.top_skills_2015_chart.url,
-        'top_skills_2015_data': stats.top_skills_2015_data,
+        'graph_of_vacs_years_url': stats.graph_of_vacs_years.url,
+        'data_table_vacs_by_year': stats.data_table_vacs_by_year,
 
-        'top_skills_2016_chart': stats.top_skills_2016_chart.url,
-        'top_skills_2016_data': stats.top_skills_2016_data,
+        'graph_sal_by_city_url': stats.graph_sal_by_city.url,
+        'data_table_sal_by_city': stats.data_table_sal_by_city,
 
-        'top_skills_2017_chart': stats.top_skills_2017_chart.url,
-        'top_skills_2017_data': stats.top_skills_2017_data,
+        'graph_vac_share_cities_url': stats.graph_vac_share_cities.url,
+        'data_table_vac_share_by_city': stats.data_table_vac_share_by_city,
 
-        'top_skills_2018_chart': stats.top_skills_2018_chart.url,
-        'top_skills_2018_data': stats.top_skills_2018_data,
+        'graph_top_sks_2015_url': stats.graph_top_sks_2015.url,
+        'data_table_top_sks_2015': stats.data_table_top_sks_2015,
 
-        'top_skills_2019_chart': stats.top_skills_2019_chart.url,
-        'top_skills_2019_data': stats.top_skills_2019_data,
+        'graph_top_sks_2016_url': stats.graph_top_sks_2016.url,
+        'data_table_top_sks_2016': stats.data_table_top_sks_2016,
 
-        'top_skills_2020_chart': stats.top_skills_2020_chart.url,
-        'top_skills_2020_data': stats.top_skills_2020_data,
+        'graph_top_sks_2017_url': stats.graph_top_sks_2017.url,
+        'data_table_top_sks_2017': stats.data_table_top_sks_2017,
 
-        'top_skills_2021_chart': stats.top_skills_2021_chart.url,
-        'top_skills_2021_data': stats.top_skills_2021_data,
+        'graph_top_sks_2018_url': stats.graph_top_sks_2018.url,
+        'data_table_top_sks_2018': stats.data_table_top_sks_2018,
 
-        'top_skills_2022_chart': stats.top_skills_2022_chart.url,
-        'top_skills_2022_data': stats.top_skills_2022_data,
+        'graph_top_sks_2019_url': stats.graph_top_sks_2019.url,
+        'data_table_top_sks_2019': stats.data_table_top_sks_2019,
 
-        'top_skills_2023_chart': stats.top_skills_2023_chart.url,
-        'top_skills_2023_data': stats.top_skills_2023_data,
+        'graph_top_sks_2020_url': stats.graph_top_sks_2020.url,
+        'data_table_top_sks_2020': stats.data_table_top_sks_2020,
 
-        'top_skills_2024_chart': stats.top_skills_2024_chart.url,
-        'top_skills_2024_data': stats.top_skills_2024_data
+        'graph_top_sks_2021_url': stats.graph_top_sks_2021.url,
+        'data_table_top_sks_2021': stats.data_table_top_sks_2021,
+
+        'graph_top_sks_2022_url': stats.graph_top_sks_2022.url,
+        'data_table_top_sks_2022': stats.data_table_top_sks_2022,
+
+        'graph_top_sks_2023_url': stats.graph_top_sks_2023.url,
+        'data_table_top_sks_2023': stats.data_table_top_sks_2023,
+
+        'graph_top_sks_2024_url': stats.graph_top_sks_2024.url,
+        'data_table_top_sks_2024': stats.data_table_top_sks_2024
     }
 
     return render(request, 'general_stats.html', content)
