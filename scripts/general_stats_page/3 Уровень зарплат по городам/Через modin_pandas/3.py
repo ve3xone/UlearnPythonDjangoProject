@@ -1,13 +1,13 @@
 import os
-import ray  # Используется для работы с modin.pandas
-import modin.pandas as pd  # Многопоточный pandas
-import numpy as np
 import re
-import matplotlib.pyplot as plt
-import requests
 import time
 import xml.etree.ElementTree as ET
 from concurrent.futures import ThreadPoolExecutor
+import ray  # Используется для работы с modin.pandas
+import modin.pandas as pd  # Многопоточный pandas
+import numpy as np
+import matplotlib.pyplot as plt
+import requests
 
 
 def fetch_currency_rates(year, month, target_currencies):
@@ -22,7 +22,7 @@ def fetch_currency_rates(year, month, target_currencies):
     Returns:
         tuple: Ключ в формате 'YYYY-MM' и словарь с курсами валют.
     """
-    date_str = f"01/{month:02d}/{year}"
+    date_str = f"01/{month:02d}/{year}" # Форматируем дату для запроса
     url = f"https://cbr.ru/scripts/XML_daily.asp?date_req={date_str}"
 
     for attempt in range(40):
@@ -62,11 +62,13 @@ def fetch_all_currency_rates():
         dict: Словарь с курсами валют по месяцам.
     """
     target_currencies = ['BYR', 'USD', 'EUR', 'KZT', 'UAH', 'AZN', 'KGS', 'UZS', 'GEL']
-    rates = {}
-    
-    tasks = [(year, month, target_currencies) for year in range(2003, 2025) 
+
+    # Генерируем список задач для каждого месяца и года
+    tasks = [(year, month, target_currencies) for year in range(2003, 2025)
              for month in range(1, 13) if not (year == 2024 and month == 12)]
 
+    # Используем многопоточность для выполнения запросов
+    rates = {}
     with ThreadPoolExecutor() as executor:
         for key, monthly_rates in executor.map(lambda args: fetch_currency_rates(*args), tasks):
             rates[key] = monthly_rates
@@ -85,15 +87,17 @@ def calculate_average_salary(row, currency_rates):
     Returns:
         float: Средняя зарплата в рублях или NaN, если данные отсутствуют.
     """
-    salary_from = row['salary_from']
-    salary_to = row['salary_to']
-    currency = row['salary_currency']
-    date = row['data']
+    salary_from = row['salary_from'] # Минимальная зарплата
+    salary_to = row['salary_to'] # Максимальная зарплата
+    currency = row['salary_currency'] # Валюта зарплаты
+    date = row['data'] # Дата публикации вакансии
 
+    # Рассчитываем среднюю зарплату
     salary_avg = (salary_from + salary_to) / 2 if salary_from and salary_to else salary_from or salary_to
     if not salary_avg or currency == 'RUR' or not currency:
         return salary_avg
 
+    # Конвертируем в рубли, если валюта отличается
     return currency_rates.get(date, {}).get(currency, np.nan) * salary_avg if date in currency_rates else np.nan
 
 
@@ -107,7 +111,7 @@ def extract_year_month(date_value):
     Returns:
         str: Дата в формате 'YYYY-MM'.
     """
-    return str(date_value)[:7]
+    return str(date_value)[:7] # Извлекаем первые 7 символов
 
 
 def extract_year(date_value):
@@ -120,7 +124,7 @@ def extract_year(date_value):
     Returns:
         int: Год.
     """
-    return int(str(date_value)[:4])
+    return int(str(date_value)[:4]) # Извлекаем первые 4 символа
 
 
 def generate_html_table(dataframe):
@@ -137,11 +141,13 @@ def generate_html_table(dataframe):
     dataframe = dataframe.sort_values(by='avg_salary', ascending=False).dropna()
     dataframe.columns = ["Расположение", "Средняя Зарплата"]
 
+    # Генерируем HTML-код таблицы
     html_content = dataframe.to_html(index=False, border=1,
                                      classes='table table-dark table-bordered table-hover table-sm',
                                      float_format='{:,.0f}'.format)
     html_content = re.sub(r'text-align: right;', 'text-align: center;', html_content)
 
+    # Сохраняем таблицу в файл
     with open('salary_by_city.html', 'w', encoding='utf-8') as file:
         file.write(html_content)
 
@@ -160,12 +166,12 @@ def process_salary_data(dataframe, currency_rates):
         None
     """
     df_copy = dataframe.copy()
-    df_copy['data'] = df_copy['published_at'].apply(extract_year_month)
-    df_copy['avg_salary'] = df_copy.apply(lambda row: calculate_average_salary(row, currency_rates), axis=1)
-    df_copy = df_copy[df_copy['avg_salary'] < 10_000_000]
-    df_copy['year'] = df_copy['published_at'].apply(extract_year)
+    df_copy['data'] = df_copy['published_at'].apply(extract_year_month) # Извлекаем месяц и год
+    df_copy['avg_salary'] = df_copy.apply(lambda row: calculate_average_salary(row, currency_rates), axis=1) # Рассчитываем среднюю зарплату
+    df_copy = df_copy[df_copy['avg_salary'] < 10_000_000] # Убираем аномально высокие значения
+    df_copy['year'] = df_copy['published_at'].apply(extract_year) # Извлекаем год
 
-    pandas_df = df_copy._to_pandas()
+    pandas_df = df_copy._to_pandas() # Конвертируем DataFrame из Modin в pandas
 
     total_vacancies = pandas_df['name'].count()
     city_vacancy_counts = pandas_df['area_name'].value_counts()
@@ -179,23 +185,37 @@ def process_salary_data(dataframe, currency_rates):
 
     salary_data = salary_data[['area_name', 'avg_salary']].sort_values(by='avg_salary', ascending=True)
 
-    fig, ax = plt.subplots(figsize=(12, 7))
+    # Визуализация данных
+    _, ax = plt.subplots(figsize=(12, 7))
+    ax.set_facecolor('#25fc3b')
+    plt.gcf().set_facecolor('#25fc3b')
+    plt.style.use('dark_background')
+
+    # делаем рамку белой
+    for spine in ax.spines.values():
+        spine.set_edgecolor('white') # Цвет рамки
+        spine.set_linewidth(1) # Толщина рамки (можно уменьшить)
+
+    # Настройка цвета и толщины тиков (меток осей)
+    ax.tick_params(axis='both', colors='white', width=1)
+
     plt.title("Уровень зарплат по городам, где доля вакансий больше 1%", color='white')
     plt.barh(salary_data['area_name'], salary_data['avg_salary'], color='blue')
     plt.xlabel("Средняя зарплата", color='white')
     plt.xticks(color='white')
     plt.yticks(color='white')
     plt.grid(axis='y', color='white')
-    plt.savefig("salary_by_city.png", transparent=True, bbox_inches='tight')
+    plt.savefig("salary_by_city.png", transparent=True, bbox_inches='tight') # Сохраняем график
     plt.close()
 
-    generate_html_table(salary_data)
+    generate_html_table(salary_data) # Создаем HTML-таблицу
 
+if __name__ == "__main__":
+    # Настройка для работы с modin.pandas
+    os.environ["MODIN_ENGINE"] = "ray"
+    ray.init()
 
-# Настройка для работы с modin.pandas
-os.environ["MODIN_ENGINE"] = "ray"
-ray.init()
-
-dataframe = pd.read_csv("Z:\\vacancies_2024.csv", parse_dates=['published_at'])
-currency_rates = fetch_all_currency_rates()
-process_salary_data(dataframe, currency_rates)
+    # Читаем данные из CSV-файла
+    df = pd.read_csv("Z:\\vacancies_2024.csv", parse_dates=['published_at'])
+    curr_rates = fetch_all_currency_rates() # Получаем курсы валют
+    process_salary_data(df, curr_rates) # Обрабатываем данные и создаем визуализации
