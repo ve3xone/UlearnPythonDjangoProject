@@ -1,8 +1,8 @@
-import httpx
-import asyncio
-from bs4 import BeautifulSoup
 from datetime import datetime
 from typing import Optional, List, Dict, Any
+import asyncio
+import httpx
+from bs4 import BeautifulSoup
 
 
 def format_date_human_readable(iso_date: str) -> str:
