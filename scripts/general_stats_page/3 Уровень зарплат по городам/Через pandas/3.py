@@ -1,11 +1,11 @@
-import pandas as pd
-import numpy as np
 import re
-import matplotlib.pyplot as plt
-import requests
 import time
 import xml.etree.ElementTree as ET
 from concurrent.futures import ThreadPoolExecutor
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import requests
 
 
 def fetch_currency_rates(year, month, target_currencies):
@@ -20,7 +20,7 @@ def fetch_currency_rates(year, month, target_currencies):
     Returns:
         tuple: Ключ в формате 'YYYY-MM' и словарь с курсами валют.
     """
-    date_str = f"01/{month:02d}/{year}"
+    date_str = f"01/{month:02d}/{year}" # Форматируем дату для запроса
     url = f"https://cbr.ru/scripts/XML_daily.asp?date_req={date_str}"
 
     for attempt in range(40):
@@ -61,8 +61,8 @@ def fetch_all_currency_rates():
     """
     target_currencies = ['BYR', 'USD', 'EUR', 'KZT', 'UAH', 'AZN', 'KGS', 'UZS', 'GEL']
     rates = {}
-    
-    tasks = [(year, month, target_currencies) for year in range(2003, 2025) 
+
+    tasks = [(year, month, target_currencies) for year in range(2003, 2025)
              for month in range(1, 13) if not (year == 2024 and month == 12)]
 
     with ThreadPoolExecutor() as executor:
@@ -158,10 +158,10 @@ def process_salary_data(dataframe, currency_rates):
         None
     """
     df_copy = dataframe.copy()
-    df_copy['data'] = df_copy['published_at'].apply(extract_year_month)
-    df_copy['avg_salary'] = df_copy.apply(lambda row: calculate_average_salary(row, currency_rates), axis=1)
-    df_copy = df_copy[df_copy['avg_salary'] < 10_000_000]
-    df_copy['year'] = df_copy['published_at'].apply(extract_year)
+    df_copy['data'] = df_copy['published_at'].apply(extract_year_month) # Извлекаем месяц и год
+    df_copy['avg_salary'] = df_copy.apply(lambda row: calculate_average_salary(row, currency_rates), axis=1) # Рассчитываем среднюю зарплату
+    df_copy = df_copy[df_copy['avg_salary'] < 10_000_000] # Убираем аномально высокие значения
+    df_copy['year'] = df_copy['published_at'].apply(extract_year) # Извлекаем год
 
     total_vacancies = df_copy['name'].count()
     city_vacancy_counts = df_copy['area_name'].value_counts()
@@ -175,7 +175,20 @@ def process_salary_data(dataframe, currency_rates):
 
     salary_data = salary_data[['area_name', 'avg_salary']].sort_values(by='avg_salary', ascending=True)
 
-    fig, ax = plt.subplots(figsize=(12, 7))
+    # Визуализация данных
+    _, ax = plt.subplots(figsize=(12, 7))
+    ax.set_facecolor('#25fc3b')
+    plt.gcf().set_facecolor('#25fc3b')
+    plt.style.use('dark_background')
+
+    # делаем рамку белой
+    for spine in ax.spines.values():
+        spine.set_edgecolor('white') # Цвет рамки
+        spine.set_linewidth(1) # Толщина рамки (можно уменьшить)
+
+    # Настройка цвета и толщины тиков (меток осей)
+    ax.tick_params(axis='both', colors='white', width=1)
+
     plt.title("Уровень зарплат по городам, где доля вакансий больше 1%", color='white')
     plt.barh(salary_data['area_name'], salary_data['avg_salary'], color='blue')
     plt.xlabel("Средняя зарплата", color='white')
@@ -185,9 +198,10 @@ def process_salary_data(dataframe, currency_rates):
     plt.savefig("salary_by_city.png", transparent=True, bbox_inches='tight')
     plt.close()
 
-    generate_html_table(salary_data)
+    generate_html_table(salary_data) # Создаем HTML-таблицу
 
-
-dataframe = pd.read_csv("Z:\\vacancies_2024.csv", parse_dates=['published_at'])
-currency_rates = fetch_all_currency_rates()
-process_salary_data(dataframe, currency_rates)
+if __name__ == "__main__":
+    # Читаем данные из CSV-файла
+    df = pd.read_csv("Z:\\vacancies_2024.csv", parse_dates=['published_at'])
+    curr_rates = fetch_all_currency_rates() # Получаем курсы валют
+    process_salary_data(df, curr_rates) # Обрабатываем данные и создаем визуализации

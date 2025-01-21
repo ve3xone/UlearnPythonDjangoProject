@@ -1,16 +1,16 @@
 import os
+import time
+import re
+import xml.etree.ElementTree as ET
+from collections import Counter
+from itertools import islice
+from concurrent.futures import ThreadPoolExecutor
 import ray # Нужно для работы modin.pandas
 import modin.pandas as pd # Многопоток #3 minutes and 24 seconds
 #import pandas as pd # Однопоток
 import numpy as np
-from collections import Counter
-from itertools import islice
 import matplotlib.pyplot as plt
 import requests
-import time
-import re
-import xml.etree.ElementTree as ET
-from concurrent.futures import ThreadPoolExecutor
 
 
 def fetch_currency_data(year, month, currencies):
@@ -36,13 +36,13 @@ def fetch_currency_data(year, month, currencies):
         for attempt in range(40):
             try:
                 response = requests.get(url)
-                
+
                 print(f'{response.status_code} - {url}')
                 if response.status_code != 200:
                     print(f'[!] Ждем 60 сек... так как не получили ответ: {response.status_code} - {url}')
                     time.sleep(60)
                     continue
-                
+
                 break
             except:
                 print(f"Ошибка при выполнении запроса. Попытка {attempt + 1} из 40. ({url})")
@@ -75,8 +75,8 @@ def get_all_currency():
     currencies = ['BYR', 'USD', 'EUR', 'KZT', 'UAH', 'AZN', 'KGS', 'UZS', 'GEL']
     result = {}
 
-    tasks = [(year, month, currencies) for year in range(2003, 2025) 
-                                       for month in range(1, 13) 
+    tasks = [(year, month, currencies) for year in range(2003, 2025)
+                                       for month in range(1, 13)
                                        if not (year == 2024 and month == 12)]
 
     with ThreadPoolExecutor() as executor:
@@ -136,6 +136,7 @@ def extract_year(value):
 
 
 def create_html_table(yearly_count, year):
+    """Создает HTML-таблицу на основе данных."""
     # Удаляем строки с пропущенными значениями
     yearly_count = yearly_count.dropna()
 
@@ -153,7 +154,7 @@ def create_html_table(yearly_count, year):
 
     with open(f'top20-my-vac-year_{year}.html', 'w', encoding='utf-8') as f:
         f.write(html_string)
-    
+
     print("[i] HTML таблица успешно создана!")
 
 
@@ -176,7 +177,7 @@ def top_skills_analytics(year):
 
     create_html_table(skills_frame_rename, year)
 
-    fig, ax = plt.subplots(figsize=(40, 30))
+    _, ax = plt.subplots(figsize=(40, 30))
     ax.set_facecolor('#25fc3b')
     plt.gcf().set_facecolor('#25fc3b')
     plt.style.use('dark_background')
@@ -185,7 +186,7 @@ def top_skills_analytics(year):
     for spine in ax.spines.values():
         spine.set_edgecolor('white')  # Цвет рамки
         spine.set_linewidth(1)  # Толщина рамки (можно уменьшить)
-    
+
     # Настройка цвета и толщины тиков (меток осей)
     ax.tick_params(axis='both', colors='white', width=1)
     plt.title(f"ТОП-20 навыков за {year} для java-программиста", fontsize=30, color='white')
@@ -202,7 +203,7 @@ if __name__ == "__main__":
     ray.init()
 
     df = pd.read_csv("Z:\\vacancies_2024.csv", parse_dates=['published_at']) #Использую RAMDISK
-    
+
     df_copy = df.copy()
     names = [
         'java', 'ява', 'джава', 'java-программист', 'spring', 'hibernate', 'struts', 
@@ -219,8 +220,8 @@ if __name__ == "__main__":
     ]
     df_copy[['salary_from','salary_to']] = df_copy[['salary_from','salary_to']].map(lambda x: float(x))
     df_copy['data'] = df_copy['published_at'].apply(extract)
-    table_curr = get_all_currency()
-    df_copy['avg_salary'] = df_copy.apply(lambda row: avg_salary(row, table_curr), axis=1)
+    tab_curr = get_all_currency()
+    df_copy['avg_salary'] = df_copy.apply(lambda row: avg_salary(row, tab_curr), axis=1)
     df_copy = df_copy[df_copy['avg_salary'] < 10_000_000]
     df_copy['year'] = df_copy['published_at'].apply(extract_year)
 

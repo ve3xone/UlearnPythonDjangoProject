@@ -1,13 +1,14 @@
 import os
+import time
+import re
+import xml.etree.ElementTree as ET
+from concurrent.futures import ThreadPoolExecutor
 import ray  # Для работы с modin.pandas
 import modin.pandas as pd  # Многопоточная обработка данных
 import numpy as np
 import matplotlib.pyplot as plt
 import requests
-import time
-import re
-import xml.etree.ElementTree as ET
-from concurrent.futures import ThreadPoolExecutor
+
 
 def fetch_currency_rates(year, month, currency_codes):
     """
@@ -51,6 +52,7 @@ def fetch_currency_rates(year, month, currency_codes):
         print(f"[!] Ошибка парсинга XML: {e}")
         return f"{year}-{month:02d}", {}
 
+
 def fetch_all_currency_rates():
     """
     Получает курсы валют с января 2003 года по декабрь 2024 года.
@@ -67,6 +69,7 @@ def fetch_all_currency_rates():
             rates[key] = data
 
     return rates
+
 
 def calculate_avg_salary(row, exchange_rates):
     """
@@ -90,6 +93,7 @@ def calculate_avg_salary(row, exchange_rates):
 
     return exchange_rates.get(date, {}).get(currency, np.nan) * avg_salary if date in exchange_rates else np.nan
 
+
 def extract_date(value):
     """
     Извлекает дату в формате 'YYYY-MM'.
@@ -102,6 +106,7 @@ def extract_date(value):
     """
     return str(value)[:7]
 
+
 def extract_year(value):
     """
     Извлекает год из даты.
@@ -113,6 +118,7 @@ def extract_year(value):
         int: Год.
     """
     return int(str(value)[:4])
+
 
 def create_html_report(df):
     """

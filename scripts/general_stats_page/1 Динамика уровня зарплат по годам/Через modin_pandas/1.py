@@ -1,14 +1,14 @@
 # Импортируем необходимые библиотеки для работы с данными, многопоточности и визуализации
 import os
-import ray  # Для работы modin.pandas
-import modin.pandas as pd  # Многопоточная обработка данных
 import re
-import numpy as np
-import matplotlib.pyplot as plt
-import requests
 import time
 import xml.etree.ElementTree as ET
 from concurrent.futures import ThreadPoolExecutor
+import ray  # Для работы modin.pandas
+import modin.pandas as pd  # Многопоточная обработка данных
+import numpy as np
+import matplotlib.pyplot as plt
+import requests
 
 
 def fetch_currency_data(year, month, target_currencies):
@@ -65,12 +65,13 @@ def get_currency_rates():
         dict: Словарь с курсами валют по месяцам.
     """
     target_currencies = ['BYR', 'USD', 'EUR', 'KZT', 'UAH', 'AZN', 'KGS', 'UZS', 'GEL']
+
     # Генерируем список задач для каждого месяца и года
-    tasks = [(year, month, target_currencies) for year in range(2003, 2025) 
+    tasks = [(year, month, target_currencies) for year in range(2003, 2025)
              for month in range(1, 13) if not (year == 2024 and month == 12)]
 
-    results = {}
     # Используем многопоточность для выполнения запросов
+    results = {}
     with ThreadPoolExecutor() as executor:
         for key, rates in executor.map(lambda args: fetch_currency_data(*args), tasks):
             results[key] = rates
@@ -129,17 +130,17 @@ def extract_year(date_value):
     return int(str(date_value)[:4])  # Извлекаем первые 4 символа
 
 
-def create_html_table(df):
+def create_html_table(pandas_df):
     """
     Создает HTML-таблицу на основе данных о зарплатах по годам.
 
     Args:
-        df (pd.DataFrame): DataFrame с данными о средней зарплате по годам.
+        pandas_df (pd.DataFrame): DataFrame с данными о средней зарплате по годам.
 
     Returns:
         None
     """
-    pandas_df = df._to_pandas()  # Конвертируем DataFrame из Modin в pandas
+    pandas_df = pandas_df._to_pandas()  # Конвертируем DataFrame из Modin в pandas
     pandas_df.columns = ["Год", "Средняя зарплата"]
     pandas_df = pandas_df.dropna()  # Убираем строки с NaN
 
@@ -182,7 +183,7 @@ def process_salary_data(df, currency_rates):
     create_html_table(salary_pivot)  # Создаем HTML-таблицу
 
     # Визуализация данных
-    fig, ax = plt.subplots(figsize=(14, 10), facecolor='none')
+    _, ax = plt.subplots(figsize=(14, 10), facecolor='none')
     ax.set_facecolor('#25fc3b')
     plt.gcf().set_facecolor('#25fc3b')
     plt.style.use('dark_background')
@@ -213,6 +214,6 @@ if __name__ == "__main__":
     ray.init()
 
     # Читаем данные из CSV-файла
-    df = pd.read_csv("Z:\\vacancies_2024.csv", parse_dates=['published_at'])
-    currency_rates = get_currency_rates()  # Получаем курсы валют
-    process_salary_data(df, currency_rates)  # Обрабатываем данные и создаем визуализации
+    dataframe = pd.read_csv("Z:\\vacancies_2024.csv", parse_dates=['published_at'])
+    curr_rates = get_currency_rates()  # Получаем курсы валют
+    process_salary_data(dataframe, curr_rates)  # Обрабатываем данные и создаем визуализации

@@ -1,11 +1,11 @@
-import pandas as pd  # Использование многопоточного pandas
-import numpy as np
-import matplotlib.pyplot as plt
-import requests
 import time
 import re
 import xml.etree.ElementTree as ET
 from concurrent.futures import ThreadPoolExecutor
+import pandas as pd  # Использование многопоточного pandas
+import numpy as np
+import matplotlib.pyplot as plt
+import requests
 
 
 def fetch_currency_data(year, month, currency_codes):
@@ -175,8 +175,8 @@ if __name__ == "__main__":
     filtered_data[['salary_from', 'salary_to']] = filtered_data[['salary_from', 'salary_to']].astype(float)
     filtered_data['data'] = filtered_data['published_at'].apply(extract_month_year)
 
-    currency_data = get_all_currency_data()
-    filtered_data['avg_salary'] = filtered_data.apply(lambda row: calculate_average_salary(row, currency_data), axis=1)
+    curr_data = get_all_currency_data()
+    filtered_data['avg_salary'] = filtered_data.apply(lambda row: calculate_average_salary(row, curr_data), axis=1)
 
     filtered_data = filtered_data[filtered_data['avg_salary'] < 10_000_000]
     filtered_data['year'] = filtered_data['published_at'].apply(extract_year)
@@ -212,4 +212,3 @@ if __name__ == "__main__":
     plt.xlabel('Средняя зарплата', color='white')
     plt.grid(axis='y', color='white')
     plt.savefig("Уровень зарплат Java-программиста по городам.png", transparent=True, bbox_inches='tight')
-

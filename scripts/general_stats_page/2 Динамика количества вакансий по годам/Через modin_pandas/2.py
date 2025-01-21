@@ -1,13 +1,8 @@
 import os
+import re
 import ray  # Используется для работы modin.pandas
 import modin.pandas as pd  # Библиотека для многопоточной обработки данных
-import re
 import matplotlib.pyplot as plt
-
-
-# Инициализация движка для modin.pandas
-os.environ["MODIN_ENGINE"] = "ray"
-ray.init()
 
 
 def extract_date(value):
@@ -89,7 +84,7 @@ def process_vacancy_data(dataframe):
 
     vacancy_count_by_year = vacancy_count_by_year.reset_index()
 
-    fig, ax = plt.subplots(figsize=(15, 10), facecolor='none')
+    _, ax = plt.subplots(figsize=(15, 10), facecolor='none')
     ax.set_facecolor('#25fc3b')
     plt.gcf().set_facecolor('#25fc3b')
     plt.style.use('dark_background')
@@ -112,8 +107,11 @@ def process_vacancy_data(dataframe):
 
 
 if __name__ == "__main__":
+    # Инициализация движка для modin.pandas
+    os.environ["MODIN_ENGINE"] = "ray"
+    ray.init()
+
     # Загружаем данные
-    file_path = "Z:\\vacancies_2024.csv"
-    df = pd.read_csv(file_path, parse_dates=['published_at'])
+    df = pd.read_csv("Z:\\vacancies_2024.csv", parse_dates=['published_at'])
 
     process_vacancy_data(df)

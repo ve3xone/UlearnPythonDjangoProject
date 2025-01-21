@@ -1,15 +1,15 @@
-
 import os
+import time
+import re
+import xml.etree.ElementTree as ET
+from concurrent.futures import ThreadPoolExecutor
 import ray # Нужно для работы modin.pandas
 import modin.pandas as pd # Многопоток #3 minutes and 24 seconds
 #import pandas as pd # Однопоток
 import numpy as np
 import matplotlib.pyplot as plt
 import requests
-import time
-import re
-import xml.etree.ElementTree as ET
-from concurrent.futures import ThreadPoolExecutor
+
 
 def fetch_currency_data(year, month, currencies):
     """
@@ -34,13 +34,13 @@ def fetch_currency_data(year, month, currencies):
         for attempt in range(40):
             try:
                 response = requests.get(url)
-                
+
                 print(f'{response.status_code} - {url}')
                 if response.status_code != 200:
                     print(f'[!] Ждем 60 сек... так как не получили ответ: {response.status_code} - {url}')
                     time.sleep(60)
                     continue
-                
+
                 break
             except:
                 print(f"Ошибка при выполнении запроса. Попытка {attempt + 1} из 40. ({url})")
@@ -73,8 +73,8 @@ def get_all_currency():
     currencies = ['BYR', 'USD', 'EUR', 'KZT', 'UAH', 'AZN', 'KGS', 'UZS', 'GEL']
     result = {}
 
-    tasks = [(year, month, currencies) for year in range(2003, 2025) 
-                                       for month in range(1, 13) 
+    tasks = [(year, month, currencies) for year in range(2003, 2025)
+                                       for month in range(1, 13)
                                        if not (year == 2024 and month == 12)]
 
     with ThreadPoolExecutor() as executor:
@@ -134,6 +134,15 @@ def extract_year(value):
 
 
 def create_html_table(yearly_count):
+    """
+    Создает HTML-таблицу на основе данных.
+
+    Args:
+        pandas_df (pd.DataFrame): DataFrame.
+
+    Returns:
+        None
+    """
     # Преобразуем DataFrame Modin в Pandas только для вызова to_html
     pandas_df = yearly_count._to_pandas()  # Конвертируем в Pandas DataFrame
 
@@ -153,7 +162,7 @@ def create_html_table(yearly_count):
     # Заменяем text-align: right; на text-align: center;
     html_string = re.sub(r'text-align: right;', 'text-align: center;', html_string)
 
-    with open(f'count-by-year-my-vac.html', 'w', encoding='utf-8') as f:
+    with open('count-by-year-my-vac.html', 'w', encoding='utf-8') as f:
         f.write(html_string)
 
     print("[i] HTML таблица успешно создана!")
@@ -179,8 +188,8 @@ if __name__ == "__main__":
 
     df_copy[['salary_from','salary_to']] = df_copy[['salary_from','salary_to']].map(lambda x: float(x))
     df_copy['data'] = df_copy['published_at'].apply(extract)
-    table_curr = get_all_currency()
-    df_copy['avg_salary'] = df_copy.apply(lambda row: avg_salary(row, table_curr), axis=1)
+    tab_curr = get_all_currency()
+    df_copy['avg_salary'] = df_copy.apply(lambda row: avg_salary(row, tab_curr), axis=1)
     df_copy = df_copy[df_copy['avg_salary'] < 10_000_000]
     df_copy['year'] = df_copy['published_at'].apply(extract_year)
 

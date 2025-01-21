@@ -1,13 +1,11 @@
-import os
-import ray  # Для работы с modin.pandas
-import modin.pandas as pd  # Многопоточная обработка
-import numpy as np
 import re
-import matplotlib.pyplot as plt
-import requests
 import time
 import xml.etree.ElementTree as ET
 from concurrent.futures import ThreadPoolExecutor
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import requests
 
 
 def fetch_currency_data(year, month, currency_codes):
@@ -22,9 +20,10 @@ def fetch_currency_data(year, month, currency_codes):
     Returns:
         tuple: Ключ в формате 'YYYY-MM' и словарь с курсами валют.
     """
-    date_str = f"01/{month:02d}/{year}"
+    date_str = f"01/{month:02d}/{year}" # Форматируем дату для запроса
     url = f"https://cbr.ru/scripts/XML_daily.asp?date_req={date_str}"
 
+    # Пытаемся получить данные в течение 40 попыток
     for attempt in range(40):
         try:
             response = requests.get(url)
@@ -63,12 +62,14 @@ def fetch_currency_history():
         dict: Словарь с курсами валют по месяцам.
     """
     currency_codes = ['BYR', 'USD', 'EUR', 'KZT', 'UAH', 'AZN', 'KGS', 'UZS', 'GEL']
-    history = {}
 
-    tasks = [(year, month, currency_codes) for year in range(2003, 2025) 
-                                         for month in range(1, 13) 
+    # Генерируем список задач для каждого месяца и года
+    tasks = [(year, month, currency_codes) for year in range(2003, 2025)
+                                         for month in range(1, 13)
                                          if not (year == 2024 and month == 12)]
 
+    # Используем многопоточность для выполнения запросов
+    history = {}
     with ThreadPoolExecutor() as executor:
         for date_key, rates in executor.map(lambda args: fetch_currency_data(*args), tasks):
             history[date_key] = rates
@@ -87,15 +88,17 @@ def calculate_average_salary(row, currency_table):
     Returns:
         float: Средняя зарплата в рублях или NaN, если данные отсутствуют.
     """
-    salary_from = row['salary_from']
-    salary_to = row['salary_to']
-    currency = row['salary_currency']
-    date = row['data']
+    salary_from = row['salary_from']  # Минимальная зарплата
+    salary_to = row['salary_to']  # Максимальная зарплата
+    currency = row['salary_currency']  # Валюта зарплаты
+    date = row['data']  # Дата публикации вакансии
 
+    # Рассчитываем среднюю зарплату
     average_salary = (salary_from + salary_to) / 2 if salary_from and salary_to else salary_from or salary_to
     if not average_salary or currency == 'RUR' or not currency:
         return average_salary
 
+    # Конвертируем в рубли, если валюта отличается
     return currency_table.get(date, {}).get(currency, np.nan) * average_salary if date in currency_table else np.nan
 
 
@@ -109,7 +112,7 @@ def extract_date_prefix(value):
     Returns:
         str: Дата в формате 'YYYY-MM'.
     """
-    return str(value)[:7]
+    return str(value)[:7] # Извлекаем первые 7 символов
 
 
 def extract_year(value):
@@ -122,7 +125,7 @@ def extract_year(value):
     Returns:
         int: Год.
     """
-    return int(str(value)[:4])
+    return int(str(value)[:4]) # Извлекаем первые 4 символа
 
 
 def create_html_table(pandas_df):
@@ -136,17 +139,18 @@ def create_html_table(pandas_df):
         None
     """
     pandas_df.columns = ["Город", "Средняя зарплата"]
-    pandas_df = pandas_df.dropna()
+    pandas_df = pandas_df.dropna() # Убираем строки с NaN
 
+    # Генерируем HTML-код таблицы
     html_string = pandas_df.to_html(
         index=False,
         border=1,
         classes='table table-dark table-bordered table-hover table-sm',
         float_format='{:,.0f}'.format
     )
-
     html_string = re.sub(r'text-align: right;', 'text-align: center;', html_string)
 
+    # Сохраняем таблицу в файл
     with open('count_by_city.html', 'w', encoding='utf-8') as f:
         f.write(html_string)
 
@@ -164,26 +168,27 @@ def process_salary_data(df, currency_table):
     Returns:
         None
     """
-    df['data'] = df['published_at'].apply(extract_date_prefix)
-    df['average_salary'] = df.apply(lambda row: calculate_average_salary(row, currency_table), axis=1)
-    df = df[df['average_salary'] < 10_000_000]
-    df['year'] = df['published_at'].apply(extract_year)
+    df['data'] = df['published_at'].apply(extract_date_prefix) # Извлекаем месяц и год
+    df['average_salary'] = df.apply(lambda row: calculate_average_salary(row, currency_table), axis=1) # Рассчитываем среднюю зарплату
+    df = df[df['average_salary'] < 10_000_000] # Убираем аномально высокие значения
+    df['year'] = df['published_at'].apply(extract_year) # Извлекаем год
 
     aggregated_data = df.pivot_table(
-        index='area_name', 
-        values=['average_salary', 'name'], 
+        index='area_name',
+        values=['average_salary', 'name'],
         aggfunc={'average_salary': 'mean', 'name': 'count'}
     ).reset_index().sort_values(by=['name', 'average_salary'], ascending=False)
 
     top_cities = aggregated_data[['area_name', 'name']].head(9)
     other_cities_count = aggregated_data['name'].iloc[9:].sum()
-    other_cities_mean = aggregated_data['average_salary'].mean()
+
     other_city = pd.DataFrame({'area_name': ['Другие'], 'name': [other_cities_count]})
 
     final_data = pd.concat([top_cities, other_city], axis=0).reset_index(drop=True)
-    create_html_table(final_data)
+    create_html_table(final_data) # Создаем HTML-таблицу
 
-    fig, ax = plt.subplots(figsize=(15, 13))
+    # Визуализация данных
+    _, ax = plt.subplots(figsize=(15, 13))
     ax.set_facecolor('#25fc3b')
     plt.gcf().set_facecolor('#25fc3b')
     plt.style.use('dark_background')
@@ -193,14 +198,10 @@ def process_salary_data(df, currency_table):
     plt.close()
 
 
-# Инициализация окружения
-os.environ["MODIN_ENGINE"] = "ray"
-ray.init()
+if __name__ == "__main__":
+    # Загрузка данных
+    dataframe = pd.read_csv("Z:\\vacancies_2024.csv", parse_dates=['published_at'])
 
-# Загрузка данных
-input_file_path = "Z:\\vacancies_2024.csv"
-df = pd.read_csv(input_file_path, parse_dates=['published_at'])
-
-# Обработка данных
-currency_data = fetch_currency_history()
-process_salary_data(df, currency_data)
+    # Обработка данных
+    curr_data = fetch_currency_history()
+    process_salary_data(dataframe, curr_data)

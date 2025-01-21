@@ -1,13 +1,13 @@
 import os
+import re
+import time
+import xml.etree.ElementTree as ET
+from concurrent.futures import ThreadPoolExecutor
 import ray  # Для работы modin.pandas
 import modin.pandas as pd  # Использование многопоточного pandas
 import numpy as np
 import matplotlib.pyplot as plt
 import requests
-import time
-import re
-import xml.etree.ElementTree as ET
-from concurrent.futures import ThreadPoolExecutor
 
 
 def fetch_currency_data(year, month, currency_codes):
@@ -22,7 +22,7 @@ def fetch_currency_data(year, month, currency_codes):
     Returns:
         tuple: Ключ (строка формата 'YYYY-MM') и словарь с курсами валют.
     """
-    date_str = f"01/{month:02d}/{year}"
+    date_str = f"01/{month:02d}/{year}" # Форматируем дату для запроса
     url = f"https://cbr.ru/scripts/XML_daily.asp?date_req={date_str}"
 
     for attempt in range(40):
@@ -155,9 +155,11 @@ def create_html_table(data_frame):
 
 
 if __name__ == "__main__":
+    # Инициализируем движок Modin для многопоточной обработки
     os.environ["MODIN_ENGINE"] = "ray"
     ray.init()
 
+    # Читаем данные из CSV-файла
     data = pd.read_csv("Z:\\vacancies_2024.csv", parse_dates=['published_at'])
     filtered_data = data.copy()
 
@@ -180,8 +182,8 @@ if __name__ == "__main__":
     filtered_data[['salary_from', 'salary_to']] = filtered_data[['salary_from', 'salary_to']].astype(float)
     filtered_data['data'] = filtered_data['published_at'].apply(extract_month_year)
 
-    currency_data = get_all_currency_data()
-    filtered_data['avg_salary'] = filtered_data.apply(lambda row: calculate_average_salary(row, currency_data), axis=1)
+    curr_data = get_all_currency_data() # Получаем курсы валют
+    filtered_data['avg_salary'] = filtered_data.apply(lambda row: calculate_average_salary(row, curr_data), axis=1)
 
     filtered_data = filtered_data[filtered_data['avg_salary'] < 10_000_000]
     filtered_data['year'] = filtered_data['published_at'].apply(extract_year)
@@ -217,4 +219,4 @@ if __name__ == "__main__":
     plt.xlabel('Средняя зарплата', color='white')
     plt.grid(axis='y', color='white')
     plt.savefig("Уровень зарплат Java-программиста по городам.png", transparent=True, bbox_inches='tight')
-
+    plt.close()

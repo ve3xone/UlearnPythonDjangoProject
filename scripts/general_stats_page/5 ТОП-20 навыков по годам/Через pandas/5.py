@@ -1,13 +1,13 @@
-import pandas as pd  # Для многопоточной работы с DataFrame
-import numpy as np
 import re
-import matplotlib.pyplot as plt
-import requests
 import time
 import xml.etree.ElementTree as ET
 from concurrent.futures import ThreadPoolExecutor
 from collections import Counter
 from itertools import islice
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import requests
 
 
 def fetch_currency_data(year, month, currencies):
@@ -162,12 +162,12 @@ def generate_top_skills(year, dataframe):
     skills_df = skills_df.sort_values(by='Частота').reset_index(drop=True)
     create_html_table(skills_df, year=year)
 
-    fig, ax = plt.subplots(figsize=(17, 13))
+    _, ax = plt.subplots(figsize=(17, 13))
     plt.title(f"ТОП-20 навыков по {year} году", color='white', fontsize=24)
     ax.set_facecolor('#25fc3b')
     plt.gcf().set_facecolor('#25fc3b')
     plt.style.use('dark_background')
-    
+
     # делаем рамку белой
     for spine in ax.spines.values():
         spine.set_edgecolor('white')  # Цвет рамки
@@ -183,16 +183,17 @@ def generate_top_skills(year, dataframe):
     plt.close()
 
 
-# Загрузка и обработка данных
-df = pd.read_csv("Z:\\vacancies_2024.csv", parse_dates=['published_at'])
-currency_rates = fetch_all_currencies()
+if __name__ == "__main__":
+    # Загрузка и обработка данных
+    df = pd.read_csv("Z:\\vacancies_2024.csv", parse_dates=['published_at'])
+    curr_rates = fetch_all_currencies()
 
-# Подготовка данных
-df['data'] = df['published_at'].apply(extract_year_month)
-df['avg_salary'] = df.apply(lambda row: calculate_average_salary(row, currency_rates), axis=1)
-df = df[df['avg_salary'] < 10_000_000]
-df['year'] = df['published_at'].apply(extract_year)
+    # Подготовка данных
+    df['data'] = df['published_at'].apply(extract_year_month)
+    df['avg_salary'] = df.apply(lambda row: calculate_average_salary(row, curr_rates), axis=1)
+    df = df[df['avg_salary'] < 10_000_000]
+    df['year'] = df['published_at'].apply(extract_year)
 
-# Генерация отчетов для каждого года
-for year in range(2015, 2025):
-    generate_top_skills(year, dataframe=df)
+    # Генерация отчетов для каждого года
+    for y in range(2015, 2025):
+        generate_top_skills(y, dataframe=df)

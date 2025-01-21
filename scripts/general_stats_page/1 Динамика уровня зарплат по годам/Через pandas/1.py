@@ -1,11 +1,11 @@
-import pandas as pd
 import re
-import numpy as np
-import matplotlib.pyplot as plt
-import requests
 import time
 import xml.etree.ElementTree as ET
 from concurrent.futures import ThreadPoolExecutor
+import requests
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
 
 
 def fetch_currency_data(year, month, target_currencies):
@@ -60,7 +60,7 @@ def get_currency_rates():
         dict: Словарь с курсами валют по месяцам.
     """
     target_currencies = ['BYR', 'USD', 'EUR', 'KZT', 'UAH', 'AZN', 'KGS', 'UZS', 'GEL']
-    tasks = [(year, month, target_currencies) for year in range(2003, 2025) 
+    tasks = [(year, month, target_currencies) for year in range(2003, 2025)
              for month in range(1, 13) if not (year == 2024 and month == 12)]
 
     results = {}
@@ -168,7 +168,7 @@ def process_salary_data(df, currency_rates):
 
     create_html_table(salary_pivot)
 
-    fig, ax = plt.subplots(figsize=(14, 10), facecolor='none')
+    _, ax = plt.subplots(figsize=(14, 10), facecolor='none')
     ax.set_facecolor('#25fc3b')
     plt.gcf().set_facecolor('#25fc3b')
     plt.style.use('dark_background')
@@ -194,6 +194,6 @@ def process_salary_data(df, currency_rates):
 
 
 if __name__ == "__main__":
-    df = pd.read_csv("Z:\\vacancies_2024.csv", parse_dates=['published_at'])
-    currency_rates = get_currency_rates()
-    process_salary_data(df, currency_rates)
+    dataframe = pd.read_csv("Z:\\vacancies_2024.csv", parse_dates=['published_at'])
+    curr_rates = get_currency_rates()
+    process_salary_data(dataframe, curr_rates)
